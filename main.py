@@ -9,14 +9,19 @@ import threading
 
 root = Tk()
 
-global files
-files = []
-global i
-i = -1
+global files, i, guessed, link, guess
 
-for file in os.listdir("/Users/krist/Documents/Programmeerimine/Serious projects/Musicguessing/songs"):
-    files.append(file)
-    i += 1
+files = []
+i = -1
+guessed = False
+if not os.path.exists(f"{os.getcwd()}/songs"):
+    os.mkdir("songs")
+else:
+    for file in os.listdir(f"{os.getcwd()}/songs"):
+        if file[-4:] == "webm":
+            files.append(file)
+            i += 1
+
 print(files)
 
 # Checks if media is playing, if it is playing then returns 1, otherwise returns 0
@@ -34,21 +39,19 @@ def Download():
             video = pafy.new(url)
             audio = video.audiostreams
             audio[3].download(filepath=f"{os.getcwd()}/songs")
-
-            # Button(root, text="Play", command=Play).place(x=120, y=200)
     else:
         video = pafy.new(link.get())
         audio = video.audiostreams
         audio[3].download(filepath="/Users/krist/Documents/Programmeerimine/Serious projects/Musicguessing")
-        
+    
 # Plays a random song from the folder "songs"
 def Play():
+    global i
     while len(files) > 0:
-        global randint, filename
-        randint = random.randint(0, i)
-        filename = files[randint].split(".")
-        print(random)
-        p = vlc.MediaPlayer("/Users/krist/Documents/Programmeerimine/Serious projects/Musicguessing/songs/" + files[randint])
+        global randinteger, filename
+        randinteger = random.randint(0, i)
+        filename = files[randinteger].split(".")
+        p = vlc.MediaPlayer("/Users/krist/Documents/Programmeerimine/Serious projects/Musicguessing/songs/" + files[randinteger])
         p.audio_set_volume(62)
         p.play()
 
@@ -58,17 +61,43 @@ def Play():
         while guessed == False:
             pass
 
-        files.remove(files[randint])
+        files.remove(files[randinteger])
+        print(f"All {i} songs played")
         i -= 1
         p.stop()
+        time.sleep(1)
+        setFalse(guessed)
 
 # Checks if the guess is correct
+
+def setFalse(guess):
+    guess = False
+
 def guessChecker():
+
+    # Segregating the author, song name and genre
+    filename.pop(0)
+    filename.pop(-1)
+    for n in filename:
+        if len(n.split("-")) > 1:
+            print(n.split("-"))
+            split = n.split("-")
+            filename[filename.index(n)] = " ".join(split)
+    print(filename)
+
+    author = filename[0]
+    type = filename[1]
+    name = filename[2]
+
     global guessed
-    guessed = False
+    setFalse(guessed)
+    print(guessed)
+
     if guess.get().lower() == author.lower() + " " + type.lower() + " " + name.lower():
             guessed = True
             print("Correct")
+    time.sleep(0.9)
+    guessed = False
 
 # Tkinter
 root.geometry("800x500")
@@ -77,7 +106,6 @@ root.eval('tk::PlaceWindow . center')
 root.title("Song guesser")
 
 # Inputs
-global link, guess
 link = StringVar()
 guess = StringVar()
 
@@ -96,16 +124,5 @@ linkEnter = Entry(root, width = 60, textvariable = link).place(x=25, y=60)
 Label(root, text="Guess the song author, type/genre and name(ex. creator Spiritus Gregoriuse koraal Veni): ").place(x=32, y=220)   
 Button(root, text="Guess", command = guessChecker).place(x = 595, y = 258)
 Entry(root, width = 60, textvariable = guess).place(x=25, y=260)
-
-# Segregating the author, song name and genre
-filename.pop(0)
-filename.pop(-1)
-print(filename)
-
-# Guessing loop
-author = filename[0]
-type = filename[1]
-name = filename[2]
-guessed = False
 
 root.mainloop()
