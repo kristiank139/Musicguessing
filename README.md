@@ -11,5 +11,5 @@
 ## Program problems:
 
 1. Title cannot include many charactes
-2. No way to reveal the correct guess yet
+2. No way to reveal the correct title yet
 
