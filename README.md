@@ -10,6 +10,6 @@
 
 ## Program problems:
 
-1. Title cannot include many charactes
+1. Title cannot include many characters
 2. No way to reveal the correct title yet
 
