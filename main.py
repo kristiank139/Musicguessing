@@ -93,8 +93,9 @@ def guessChecker():
 
     global guessed
     setFalse(guessed)
-    print(guess, filename)
-    if guess.get().lower() == filename[0].lower() and guess.get():
+    print(guess.get().lower())
+    print(filename[0].lower())
+    if guess.get().lower().strip() == filename[0].lower().strip() and guess.get():
             guessed = True
             print("Correct")
     elif guess.get().lower() == filename[0].lower():
@@ -150,7 +151,7 @@ linkEnter = Entry(root, width = 60, textvariable = link).place(x=25, y=60)
 titleEnter = Entry(root, width = 25, textvariable = titleSet).place(x=105, y=330)
 Entry(root, width = 60, textvariable = guess).place(x=25, y=240)
 
-# Separators
+# Separator
 ttk.Separator(root, orient='horizontal').place(x=0, y=100, width=800)
 ttk.Separator(root, orient='horizontal').place(x=0, y=185, width=800)
 ttk.Separator(root, orient='horizontal').place(x=0, y=285, width=800)
