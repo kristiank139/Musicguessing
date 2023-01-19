@@ -1,3 +1,5 @@
+# Musicguessing
+All webm files CANNOT have colon(:) nor a semicolon(;) in their name
 # A Python program to help memorize the title, author and genre of a song.
 
 ## Using this program:
@@ -12,4 +14,5 @@
 
 1. Title cannot include many characters
 2. No way to reveal the correct title yet
+
 
