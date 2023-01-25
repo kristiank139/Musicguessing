@@ -158,6 +158,3 @@ ttk.Separator(root, orient='horizontal').place(x=0, y=285, width=800)
 ttk.Separator(root, orient='horizontal').place(x=0, y=425, width=800)
 
 root.mainloop()
-Entry(root, width = 60, textvariable = guess).place(x=25, y=240)
-
-root.mainloop()
