@@ -1,20 +1,20 @@
 from tkinter import *
 from tkinter import ttk
-from pytube import YouTube, Playlist
+from pytube import Playlist
 import vlc
 import time
 import pafy
 import random
 import os
 import threading
-
-root = Tk()
+import json
 
 global files, i, guessed, link, guess, titleSet
 
 files = []
 i = -1
 guessed = False
+names = {}
 
 # Check if "songs" folder exists, if it doesn't, then creates it. Adds all the files in the folder to list "files"
 if not os.path.exists(f"{os.getcwd()}/songs"):
@@ -25,14 +25,27 @@ else:
             files.append(file)
             i += 1
 
+if not os.path.exists(f"{os.getcwd()}/names.json"):
+    for i in range(len(files)):
+        name = input(f"Enter the name for {files[i]}: ")
+        names[files[i]] = name
+    with open("names.json", "w",) as f:
+        json.dump(names, f)
+else:
+    with open("names.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+        for key in data:
+            names[key] = data[key]
+        print(names)
+
+root = Tk()
+
 # Checks if media is playing, if it is playing then returns 1, otherwise returns 0
 def MediaParsedChanged(media):
     return media.is_playing()
 
 # Downloading the songs from the playlist
 def Download():
-    if not os.path.exists(f"{os.getcwd()}/songs"):
-        os.mkdir("songs")
     if "playlist" in link.get() and link.get():
         p = Playlist(str(link.get()))
         if len(p.video_urls) == 0:
@@ -68,6 +81,7 @@ def Play():
         # Waiting for it to start playing
         while MediaParsedChanged(p) == 0:
             time.sleep(0.1)
+
         # Infinite loop that will break once guessed is equal to True
         while guessed == False:
             pass
@@ -85,30 +99,24 @@ def setFalse(g):
 # Checks if the guess is correct
 def guessChecker():
 
-    # Segregating the author, song name and genre
-    for n in filename:
-        if len(n.split("-")) > 1:
-            split = n.split("-")
-            filename[filename.index(n)] = " ".join(split)
 
     global guessed
     setFalse(guessed)
-    print(guess.get().lower())
-    print(filename[0].lower())
-    if guess.get().lower().strip() == filename[0].lower().strip() and guess.get():
+    print(names[files[randinteger]])
+    if guess.get().lower().strip() == names[files[randinteger]].lower().strip() and guess.get():
             guessed = True
             print("Correct")
-    elif guess.get().lower() == filename[0].lower():
-        print("Wrong guess")
+    elif not guess.get():
+        print("Enter a guess!")
     elif filename == None:
         print("Song isn't playing yet!")
     else:
-        print("Enter a guess")
+        print("Wrong guess")
+    print(names[files[randinteger]].lower())
     time.sleep(0.9)
     guessed = False
 
 def fileRename():
-
  # Renaming the file with the right format
     old_name = f"{os.getcwd()}/songs/{files[randinteger]}"
     replaced = f"{titleSet.get()}".replace(" ", "-").replace(":", "").replace(";", "")
@@ -156,5 +164,8 @@ ttk.Separator(root, orient='horizontal').place(x=0, y=100, width=800)
 ttk.Separator(root, orient='horizontal').place(x=0, y=185, width=800)
 ttk.Separator(root, orient='horizontal').place(x=0, y=285, width=800)
 ttk.Separator(root, orient='horizontal').place(x=0, y=425, width=800)
+
+# On enter run the guessChecker function
+root.bind('<Return>', lambda event: guessChecker())
 
 root.mainloop()
