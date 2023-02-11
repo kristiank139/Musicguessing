@@ -190,20 +190,16 @@ class Player(Frame):
         """
         if p == None:
             return
-        # since the self.player.get_length can change while playing,
-        # re-set the timeslider to the correct range.
+        
         length = p.get_length()
         dbl = length * 0.001
         self.timeslider.config(to=dbl)
 
-        # update the time on the slider
         tyme = p.get_time()
         if tyme == -1:
             tyme = 0
         dbl = tyme * 0.001
         self.timeslider_last_val = ("%.0f" % dbl) + ".0"
-        # don't want to programatically change slider while user is messing with it.
-        # wait 2 seconds after user lets go of slider
         if time.time() > (self.timeslider_last_update + 2.0):
             self.timeslider.set(dbl)
 
@@ -213,19 +209,6 @@ class Player(Frame):
         nval = self.scale_var.get()
         sval = str(nval)
         if self.timeslider_last_val != sval:
-            # this is a hack. The timer updates the time slider.
-            # This change causes this rtn (the 'slider has changed' rtn) to be invoked.
-            # I can't tell the difference between when the user has manually moved the slider and when
-            # the timer changed the slider. But when the user moves the slider tkinter only notifies
-            # this rtn about once per second and when the slider has quit moving.
-            # Also, the tkinter notification value has no fractional seconds.
-            # The timer update rtn saves off the last update value (rounded to integer seconds) in timeslider_last_val
-            # if the notification time (sval) is the same as the last saved time timeslider_last_val then
-            # we know that this notification is due to the timer changing the slider.
-            # otherwise the notification is due to the user changing the slider.
-            # if the user is changing the slider then I have the timer routine wait for at least
-            # 2 seconds before it starts updating the slider again (so the timer doesn't start fighting with the
-            # user)
             self.timeslider_last_update = time.time()
             mval = "%.0f" % (nval * 1000)
             p.set_time(int(mval)) # expects milliseconds
@@ -248,9 +231,6 @@ class Player(Frame):
         is_mute = p.audio_get_mute()
 
         p.audio_set_mute(not is_mute)
-        # update the volume slider;
-        # since vlc volume range is in [0, 200],
-        # and our volume slider has range [0, 100], just divide by 2.
         self.volume_var.set(p.audio_get_volume())
 
     def OnSetVolume(self):
